@@ -22,7 +22,7 @@ def init_bridges():
         q = Queue(in_vk_peer_id=x["vk_peer_id"], out_tg_chat_id=x["tg_chat_id"], tg=tg)
         qs.append(q)
 
-        vk_names |= vk_parse_names(vk, x["vk_peer_id"])
+        vk_names.update(vk_parse_names(vk, x["vk_peer_id"]))
 
 
 def vk_parse_names(vk, peer_id):
