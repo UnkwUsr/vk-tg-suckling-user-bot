@@ -1,5 +1,6 @@
 import json
 
+
 class Queue:
     in_vk_peer_id = None
     out_tg_chat_id = None
@@ -14,7 +15,7 @@ class Queue:
         if event.peer_id != self.in_vk_peer_id:
             return
 
-        text = event._author_name + ": " + event.text
+        text = event._author_name + ": " + event.message
 
         if event.attachments:
             text += "\n---\nAttachments: \n" + json.dumps(event.attachments)
