@@ -35,6 +35,14 @@ class Queue:
                         + reply["text"]
                     )
 
+                # yes, yet another attribute with name "attachments"
+                for itach in item["attachments"]:
+                    if "photo" in itach.keys():
+                        # TOOD: probably should take proper size. Some of them
+                        # can be cropped, this is bad
+                        # https://dev.vk.com/ru/reference/objects/photo-sizes
+                        text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
+
             text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
 
         self.tg.send_message(chat_id=self.out_tg_chat_id, text=text)
