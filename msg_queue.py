@@ -42,6 +42,9 @@ class Queue:
                         # can be cropped, this is bad
                         # https://dev.vk.com/ru/reference/objects/photo-sizes
                         text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
+                    if "audio_message" in itach.keys():
+                        # TODO: ogg or mp3?
+                        text += "\nVoice: " + itach["audio_message"]["link_ogg"]
 
             text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
 
