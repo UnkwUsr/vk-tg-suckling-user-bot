@@ -48,4 +48,12 @@ class Queue:
 
             text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
 
-        self.tg.send_message(chat_id=self.out_tg_chat_id, text=text)
+        # sometimes telegram fails, so try until succesfull
+        while True:
+            try:
+                self.tg.send_message(chat_id=self.out_tg_chat_id, text=text)
+                break
+            except Exception as e:
+                print("tg send_message exception:")
+                print(e)
+                continue
