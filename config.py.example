@@ -1,0 +1,7 @@
+VK_TOKEN = ""
+TG_TOKEN = ""
+
+bridges = [
+    {"vk_peer_id": -203, "tg_chat_id": 8345},
+    {"vk_peer_id": 2000000001, "tg_chat_id": -401},
+]
