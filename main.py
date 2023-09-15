@@ -9,13 +9,7 @@ import config
 def vk_on_message(event):
     pprint(vars(event))
 
-    author_id = None
-    if hasattr(event, "user_id"):
-        author_id = event.user_id
-    if hasattr(event, "group_id"):
-        author_id = event.group_id
-
-    event._author_name = vk_names[author_id]
+    event._get_id_name = lambda x: vk_names[x]
 
     for q in qs:
         q.on_in_message(event)

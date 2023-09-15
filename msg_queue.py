@@ -15,7 +15,13 @@ class Queue:
         if event.peer_id != self.in_vk_peer_id:
             return
 
-        text = event._author_name + ": " + event.message
+        author_id = None
+        if hasattr(event, "user_id"):
+            author_id = event.user_id
+        if hasattr(event, "group_id"):
+            author_id = event.group_id
+
+        text = event._get_id_name(author_id) + ": " + event.message
 
         if event.attachments:
             text += "\n---\nAttachments: \n" + json.dumps(event.attachments)
