@@ -16,4 +16,9 @@ class Vk:
         longpoll = VkLongPoll(self.session, mode=VkLongpollMode.GET_ATTACHMENTS)
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                # lazy
+                event._load_attachments = lambda: self.vk.messages.getById(
+                    message_ids=event.message_id
+                )
+
                 callback(event)
