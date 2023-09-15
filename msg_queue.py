@@ -1,3 +1,5 @@
+import json
+
 class Queue:
     in_vk_peer_id = None
     out_tg_chat_id = None
@@ -15,6 +17,6 @@ class Queue:
         text = event._author_name + ": " + event.text
 
         if event.attachments:
-            text = "(Have attacments)\n" + text
+            text += "\n---\nAttachments: \n" + json.dumps(event.attachments)
 
         self.tg.send_message(chat_id=self.out_tg_chat_id, text=text)
