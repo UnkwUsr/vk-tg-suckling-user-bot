@@ -62,6 +62,13 @@ class Queue:
                         # TOOD: probably should take proper size. Some of them
                         # can be cropped, this is bad
                         # https://dev.vk.com/ru/reference/objects/photo-sizes
+
+                        # TODO: this is to take with max size
+                        # for i in items["items"][0]["attachments"][0]["photo"]["sizes"]:
+                        #     if i["height"] > max_i:
+                        #         max_i = i["height"]
+                        #         item_url = i["url"]
+
                         text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
                     if "audio_message" in itach.keys():
                         # TODO: ogg or mp3?
