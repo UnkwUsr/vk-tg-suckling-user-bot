@@ -14,11 +14,20 @@ class Vk:
         print("Listening")
 
         longpoll = VkLongPoll(self.session, mode=VkLongpollMode.GET_ATTACHMENTS)
-        for event in longpoll.listen():
-            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                # lazy
-                event._load_attachments = lambda: self.vk.messages.getById(
-                    message_ids=event.message_id
-                )
 
-                callback(event)
+        # sometimes vk listen may fail with timeout, so try until succesfull
+        while True:
+            try:
+                for event in longpoll.listen():
+                    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                        # lazy
+                        event._load_attachments = lambda: self.vk.messages.getById(
+                            message_ids=event.message_id
+                        )
+
+                        callback(event)
+                break
+            except Exception as e:
+                print("vk listen() exception:")
+                print(e)
+                continue
