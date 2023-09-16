@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 
 class Queue:
@@ -26,6 +27,8 @@ class Queue:
         if event.attachments:
             attachments = event._load_attachments()["items"]
             for item in attachments:
+                print("Attachment: ", end="")
+                pprint(item)
                 if "reply_message" in item.keys():
                     # TODO: probably also take attachments from there,
                     # recursive
@@ -75,3 +78,6 @@ class Queue:
                 print("tg send_message exception:")
                 print(e)
                 continue
+
+        # log separator between events
+        print()
