@@ -27,6 +27,8 @@ class Queue:
             attachments = event._load_attachments()["items"]
             for item in attachments:
                 if "reply_message" in item.keys():
+                    # TODO: probably also take attachments from there,
+                    # recursive
                     reply = item["reply_message"]
                     text += (
                         "\n---\nReplied to: "
@@ -34,6 +36,22 @@ class Queue:
                         + ": "
                         + reply["text"]
                     )
+                if "fwd_messages" in item.keys():
+                    # TODO: probably also take attachments from there,
+                    # recursive
+                    fwds = item["fwd_messages"]
+                    for fwd in fwds:
+                        text += (
+                            "\n---\nForwarded: "
+                            + event._get_id_name(abs(fwd["from_id"]))
+                            + ": "
+                            + fwd["text"]
+                        )
+                        # stub, we do not support deep forwarded messages. On
+                        # the other hand, vk does the same on the site. But api
+                        # in real returns all forwards chain
+                        if "fwd_messages" in fwd.keys():
+                            text += "*reforwarded messages*"
 
                 # yes, yet another attribute with name "attachments"
                 for itach in item["attachments"]:
