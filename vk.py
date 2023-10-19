@@ -86,6 +86,10 @@ class Vk:
                 text += "\nDocument: " + attach["doc"]["url"]
             if "link" in attach.keys():
                 text += "\nLink: " + attach["link"]["url"]
+            if "video" in attach.keys():
+                video = attach["video"]
+                url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
+                text += "\nVideo: " + url
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
