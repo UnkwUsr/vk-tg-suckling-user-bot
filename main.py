@@ -9,7 +9,7 @@ import config
 def vk_on_message(event):
     pprint(vars(event))
 
-    event._get_id_name = lambda x: vk_names[x]
+    event._get_id_name = lambda x: vk_names[x] if x in vk_names else "id_" + str(x)
 
     for q in qs:
         q.on_in_message(event)
