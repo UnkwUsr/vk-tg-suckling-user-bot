@@ -77,6 +77,8 @@ class Vk:
                 # can be cropped, this is bad
                 # https://dev.vk.com/ru/reference/objects/photo-sizes
                 text += "\nPhoto: " + attach["photo"]["sizes"][-1]["url"]
+            if "sticker" in attach.keys():
+                text += "\nSticker: " + attach["sticker"]["images"][-1]["url"]
             if "audio_message" in attach.keys():
                 # TODO: ogg or mp3?
                 text += "\nVoice: " + attach["audio_message"]["link_ogg"]
