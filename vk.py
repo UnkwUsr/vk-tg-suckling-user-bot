@@ -61,16 +61,6 @@ class Vk:
     def recursive_process_message(self, message):
         text = self.get_id_name(abs(message["from_id"])) + ": " + message["text"]
 
-        if "reply_message" in message.keys():
-            reply = message["reply_message"]
-            text += "\n---\nReplied to: "
-            text += self.recursive_process_message(reply)
-        if "fwd_messages" in message.keys():
-            fwds = message["fwd_messages"]
-            for fwd in fwds:
-                text += "\n---\nForwarded: "
-                text += self.recursive_process_message(fwd)
-
         for attach in message["attachments"]:
             if "photo" in attach.keys():
                 # TOOD: probably should take proper size. Some of them
@@ -94,6 +84,16 @@ class Vk:
                 wall = attach["wall"]
                 url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
                 text += "\nWall: {0}\n{1}".format(url, wall["text"])
+
+        if "reply_message" in message.keys():
+            reply = message["reply_message"]
+            text += "\n---\nReplied to: "
+            text += self.recursive_process_message(reply)
+        if "fwd_messages" in message.keys():
+            fwds = message["fwd_messages"]
+            for fwd in fwds:
+                text += "\n---\nForwarded: "
+                text += self.recursive_process_message(fwd)
 
         return text
 
