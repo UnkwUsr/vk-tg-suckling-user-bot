@@ -93,7 +93,9 @@ class Vk:
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
-                text += "\nWall: {0}\n{1}".format(url, wall["text"])
+                # a little bit hack, but we can extract some attachments with it
+                wall_content = self.recursive_process_message(wall)
+                text += "\nWall: {0}\n{1}".format(url, wall_content)
 
         return text
 
