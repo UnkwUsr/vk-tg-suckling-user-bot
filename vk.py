@@ -88,7 +88,7 @@ class Vk:
                 text += "\nLink: " + attach["link"]["url"]
             if "wall" in attach.keys():
                 wall = attach["wall"]
-                url = "vk.com/wall{0}_{1}".format(wall["from_id"], wall["id"])
+                url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
                 text += "\nWall: {0}\n{1}".format(url, wall["text"])
 
         return text
