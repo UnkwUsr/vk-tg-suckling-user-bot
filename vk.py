@@ -8,6 +8,8 @@ from pprint import pprint
 class Vk:
     session = None
     vk = None
+    # user_id => name
+    names = {}
 
     def __init__(self, token):
         self.session = vk_api.VkApi(token=token)
@@ -15,6 +17,7 @@ class Vk:
 
     def listen(self, callback):
         print("Listening")
+        pprint(self.names)
 
         longpoll = VkLongPoll(self.session, mode=VkLongpollMode.GET_ATTACHMENTS)
 
@@ -43,7 +46,7 @@ class Vk:
         if hasattr(event, "group_id"):
             author_id = event.group_id
 
-        text = event._get_id_name(author_id) + ": " + event.message
+        text = self.get_id_name(author_id) + ": " + event.message
 
         if event.attachments:
             attachments = event._load_attachments()["items"]
@@ -56,7 +59,7 @@ class Vk:
                     reply = item["reply_message"]
                     text += (
                         "\n---\nReplied to: "
-                        + event._get_id_name(abs(reply["from_id"]))
+                        + self.get_id_name(abs(reply["from_id"]))
                         + ": "
                         + reply["text"]
                     )
@@ -67,7 +70,7 @@ class Vk:
                     for fwd in fwds:
                         text += (
                             "\n---\nForwarded: "
-                            + event._get_id_name(abs(fwd["from_id"]))
+                            + self.get_id_name(abs(fwd["from_id"]))
                             + ": "
                             + fwd["text"]
                         )
@@ -91,3 +94,24 @@ class Vk:
             text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
 
         return text
+
+    def get_id_name(self, id):
+        if id in self.names:
+            return self.names[id]
+        else:
+            return "id_" + str(id)
+
+    def update_parse_names(self, peer_id):
+        response = self.vk.messages.getConversationMembers(peer_id=peer_id)
+        res = {}
+        for x in response["profiles"]:
+            id = x["id"]
+            name = x["first_name"] + " " + x["last_name"]
+            self.names[id] = name
+        if "groups" in response.keys():
+            for x in response["groups"]:
+                id = x["id"]
+                name = x["name"]
+                self.names[id] = name
+
+        return res
