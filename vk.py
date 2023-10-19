@@ -47,51 +47,57 @@ class Vk:
             author_id = event.group_id
 
         text = self.get_id_name(author_id) + ": " + event.message
-
         if event.attachments:
             attachments = event._load_attachments()["items"]
-            for item in attachments:
-                print("Attachment: ", end="")
-                pprint(item)
-                if "reply_message" in item.keys():
-                    # TODO: probably also take attachments from there,
-                    # recursive
-                    reply = item["reply_message"]
-                    text += (
-                        "\n---\nReplied to: "
-                        + self.get_id_name(abs(reply["from_id"]))
-                        + ": "
-                        + reply["text"]
-                    )
-                if "fwd_messages" in item.keys():
-                    # TODO: probably also take attachments from there,
-                    # recursive
-                    fwds = item["fwd_messages"]
-                    for fwd in fwds:
-                        text += (
-                            "\n---\nForwarded: "
-                            + self.get_id_name(abs(fwd["from_id"]))
-                            + ": "
-                            + fwd["text"]
-                        )
-                        # stub, we do not support deep forwarded messages. On
-                        # the other hand, vk does the same on the site. But api
-                        # in real returns all forwards chain
-                        if "fwd_messages" in fwd.keys():
-                            text += "*reforwarded messages*"
-
-                # yes, yet another attribute with name "attachments"
-                for itach in item["attachments"]:
-                    if "photo" in itach.keys():
-                        # TOOD: probably should take proper size. Some of them
-                        # can be cropped, this is bad
-                        # https://dev.vk.com/ru/reference/objects/photo-sizes
-                        text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
-                    if "audio_message" in itach.keys():
-                        # TODO: ogg or mp3?
-                        text += "\nVoice: " + itach["audio_message"]["link_ogg"]
+            text += self.recursive_process_attachments(attachments)
 
             text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
+
+        return text
+
+    def recursive_process_attachments(self, attachments):
+        text = ""
+
+        for item in attachments:
+            print("Attachment: ", end="")
+            pprint(item)
+            if "reply_message" in item.keys():
+                # TODO: probably also take attachments from there,
+                # recursive
+                reply = item["reply_message"]
+                text += (
+                    "\n---\nReplied to: "
+                    + self.get_id_name(abs(reply["from_id"]))
+                    + ": "
+                    + reply["text"]
+                )
+            if "fwd_messages" in item.keys():
+                # TODO: probably also take attachments from there,
+                # recursive
+                fwds = item["fwd_messages"]
+                for fwd in fwds:
+                    text += (
+                        "\n---\nForwarded: "
+                        + self.get_id_name(abs(fwd["from_id"]))
+                        + ": "
+                        + fwd["text"]
+                    )
+                    # stub, we do not support deep forwarded messages. On
+                    # the other hand, vk does the same on the site. But api
+                    # in real returns all forwards chain
+                    if "fwd_messages" in fwd.keys():
+                        text += "*reforwarded messages*"
+
+            # yes, yet another attribute with name "attachments"
+            for itach in item["attachments"]:
+                if "photo" in itach.keys():
+                    # TOOD: probably should take proper size. Some of them
+                    # can be cropped, this is bad
+                    # https://dev.vk.com/ru/reference/objects/photo-sizes
+                    text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
+                if "audio_message" in itach.keys():
+                    # TODO: ogg or mp3?
+                    text += "\nVoice: " + itach["audio_message"]["link_ogg"]
 
         return text
 
