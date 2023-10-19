@@ -80,6 +80,8 @@ class Vk:
             if "audio_message" in attach.keys():
                 # TODO: ogg or mp3?
                 text += "\nVoice: " + attach["audio_message"]["link_ogg"]
+            if "doc" in attach.keys():
+                text += "\nDocument: " + attach["doc"]["url"]
 
         return text
 
