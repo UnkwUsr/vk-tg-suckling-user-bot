@@ -27,9 +27,6 @@ class Vk:
                 for event in longpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                         # lazy
-                        event._load_attachments = lambda: self.vk.messages.getById(
-                            message_ids=event.message_id
-                        )
                         event._process_message = self.process_message
 
                         callback(event)
@@ -40,64 +37,49 @@ class Vk:
                 continue
 
     def process_message(self, event):
-        author_id = None
-        if hasattr(event, "user_id"):
-            author_id = event.user_id
-        if hasattr(event, "group_id"):
-            author_id = event.group_id
-
-        text = self.get_id_name(author_id) + ": " + event.message
+        text = ""
         if event.attachments:
-            attachments = event._load_attachments()["items"]
-            text += self.recursive_process_attachments(attachments)
+            full_message = self.load_full_message(event.message_id)
+            print("--------")
+            pprint(full_message)
+            print("--------")
+            text = self.recursive_process_message(full_message)
+        else:
+            author_id = None
+            if hasattr(event, "user_id"):
+                author_id = event.user_id
+            if hasattr(event, "group_id"):
+                author_id = event.group_id
 
-            text += "\n---\nRaw attachments: \n" + json.dumps(event.attachments)
+            text = self.get_id_name(author_id) + ": " + event.message
 
         return text
 
-    def recursive_process_attachments(self, attachments):
-        text = ""
+    def load_full_message(self, message_id):
+        return self.vk.messages.getById(message_ids=message_id)["items"][0]
 
-        for item in attachments:
-            print("Attachment: ", end="")
-            pprint(item)
-            if "reply_message" in item.keys():
-                # TODO: probably also take attachments from there,
-                # recursive
-                reply = item["reply_message"]
-                text += (
-                    "\n---\nReplied to: "
-                    + self.get_id_name(abs(reply["from_id"]))
-                    + ": "
-                    + reply["text"]
-                )
-            if "fwd_messages" in item.keys():
-                # TODO: probably also take attachments from there,
-                # recursive
-                fwds = item["fwd_messages"]
-                for fwd in fwds:
-                    text += (
-                        "\n---\nForwarded: "
-                        + self.get_id_name(abs(fwd["from_id"]))
-                        + ": "
-                        + fwd["text"]
-                    )
-                    # stub, we do not support deep forwarded messages. On
-                    # the other hand, vk does the same on the site. But api
-                    # in real returns all forwards chain
-                    if "fwd_messages" in fwd.keys():
-                        text += "*reforwarded messages*"
+    def recursive_process_message(self, message):
+        text = self.get_id_name(abs(message["from_id"])) + ": " + message["text"]
 
-            # yes, yet another attribute with name "attachments"
-            for itach in item["attachments"]:
-                if "photo" in itach.keys():
-                    # TOOD: probably should take proper size. Some of them
-                    # can be cropped, this is bad
-                    # https://dev.vk.com/ru/reference/objects/photo-sizes
-                    text += "\nPhoto: " + itach["photo"]["sizes"][-1]["url"]
-                if "audio_message" in itach.keys():
-                    # TODO: ogg or mp3?
-                    text += "\nVoice: " + itach["audio_message"]["link_ogg"]
+        if "reply_message" in message.keys():
+            reply = message["reply_message"]
+            text += "\n---\nReplied to: "
+            text += self.recursive_process_message(reply)
+        if "fwd_messages" in message.keys():
+            fwds = message["fwd_messages"]
+            for fwd in fwds:
+                text += "\n---\nForwarded: "
+                text += self.recursive_process_message(fwd)
+
+        for attach in message["attachments"]:
+            if "photo" in attach.keys():
+                # TOOD: probably should take proper size. Some of them
+                # can be cropped, this is bad
+                # https://dev.vk.com/ru/reference/objects/photo-sizes
+                text += "\nPhoto: " + attach["photo"]["sizes"][-1]["url"]
+            if "audio_message" in attach.keys():
+                # TODO: ogg or mp3?
+                text += "\nVoice: " + attach["audio_message"]["link_ogg"]
 
         return text
 
