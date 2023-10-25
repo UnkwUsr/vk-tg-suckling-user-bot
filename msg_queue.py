@@ -1,3 +1,6 @@
+import time
+
+
 class Queue:
     in_vk_peer_id = None
     out_tg_chat_id = None
@@ -22,6 +25,7 @@ class Queue:
             except Exception as e:
                 print("tg send_message exception:")
                 print(e)
+                time.sleep(5)
                 continue
 
         # log separator between events
