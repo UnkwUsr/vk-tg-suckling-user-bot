@@ -1,4 +1,5 @@
 import time
+from telebot.util import smart_split
 
 
 class Queue:
@@ -20,7 +21,8 @@ class Queue:
         # sometimes telegram fails, so try until succesfull
         while True:
             try:
-                self.tg.send_message(chat_id=self.out_tg_chat_id, text=text)
+                for x in smart_split(text):
+                    self.tg.send_message(chat_id=self.out_tg_chat_id, text=x)
                 break
             except Exception as e:
                 print("tg send_message exception:")
