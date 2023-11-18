@@ -12,6 +12,12 @@ too.
 Rename `config.py.example` to `config.py` and edit its content according to the
 template.
 
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
 Run bot:
 
 ```
