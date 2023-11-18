@@ -3,7 +3,7 @@ VK_TOKEN = ""
 # telegram bot token from @BotFather
 TG_TOKEN = ""
 
-# vk_peer_id: you can take it by openning some dialog on web site and then
+# vk_peer_id: you can take it by opening some dialog on web site and then
 # extracting from URL: vk.com/im?sel={peer_id_you_need}
 # tg_chat_id: you can take it using bot @raw_data_bot (this is not mine bot)
 bridges = [

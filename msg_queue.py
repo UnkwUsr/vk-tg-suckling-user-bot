@@ -18,7 +18,7 @@ class Queue:
 
         text = event._process_message(event)
 
-        # sometimes telegram fails, so try until succesfull
+        # sometimes telegram fails, so try until successful
         while True:
             try:
                 for x in smart_split(text):

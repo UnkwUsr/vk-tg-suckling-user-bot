@@ -1,7 +1,6 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType, VkLongpollMode
 
-import json
 from pprint import pprint
 
 
@@ -21,7 +20,7 @@ class Vk:
 
         longpoll = VkLongPoll(self.session, mode=VkLongpollMode.GET_ATTACHMENTS)
 
-        # sometimes vk listen may fail with timeout, so try until succesfull
+        # sometimes vk listen may fail with timeout, so try until successful
         while True:
             try:
                 for event in longpoll.listen():
@@ -63,7 +62,7 @@ class Vk:
 
         for attach in message["attachments"]:
             if "photo" in attach.keys():
-                # TOOD: probably should take proper size. Some of them
+                # TODO: probably should take proper size. Some of them
                 # can be cropped, this is bad
                 # https://dev.vk.com/ru/reference/objects/photo-sizes
                 text += "\nPhoto: " + attach["photo"]["sizes"][-1]["url"]

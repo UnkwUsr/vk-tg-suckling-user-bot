@@ -9,15 +9,15 @@ import config
 def vk_on_message(event):
     pprint(vars(event))
 
-    for q in qs:
+    for q in queues:
         q.on_in_message(event)
 
 
 def init_bridges():
-    global qs
+    global queues
     for x in config.bridges:
         q = Queue(in_vk_peer_id=x["vk_peer_id"], out_tg_chat_id=x["tg_chat_id"], tg=tg)
-        qs.append(q)
+        queues.append(q)
 
         vk.update_parse_names(x["vk_peer_id"])
 
@@ -27,7 +27,7 @@ tg = telebot.TeleBot(config.TG_TOKEN)
 
 
 # queues
-qs = []
+queues = []
 
 init_bridges()
 
