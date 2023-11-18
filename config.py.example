@@ -1,7 +1,14 @@
+# vk user auth token. To get it, use website: https://vkhost.github.io/
 VK_TOKEN = ""
+# telegram bot token from @BotFather
 TG_TOKEN = ""
 
+# vk_peer_id: you can take it by openning some dialog on web site and then
+# extracting from URL: vk.com/im?sel={peer_id_you_need}
+# tg_chat_id: you can take it using bot @raw_data_bot (this is not mine bot)
 bridges = [
-    {"vk_peer_id": -203, "tg_chat_id": 8345},
-    {"vk_peer_id": 2000000001, "tg_chat_id": -401},
+    # examples:
+    {"vk_peer_id": 83412986, "tg_chat_id": 299246723},
+    {"vk_peer_id": -234561382, "tg_chat_id": 299246723},
+    {"vk_peer_id": 2000000001, "tg_chat_id": -1008245621393},
 ]
