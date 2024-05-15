@@ -62,10 +62,12 @@ class Vk:
 
         for attach in message["attachments"]:
             if "photo" in attach.keys():
-                # TODO: probably should take proper size. Some of them
-                # can be cropped, this is bad
-                # https://dev.vk.com/ru/reference/objects/photo-sizes
-                text += "\nPhoto: " + attach["photo"]["sizes"][-1]["url"]
+                # sort them by size
+                # doc: https://dev.vk.com/ru/reference/objects/photo-sizes
+                photos = sorted(
+                    attach["photo"]["sizes"], key=lambda x: x["width"] * x["height"]
+                )
+                text += "\nPhoto: " + photos[-1]["url"]
             if "sticker" in attach.keys():
                 text += "\nSticker: " + attach["sticker"]["images"][-1]["url"]
             if "audio_message" in attach.keys():
