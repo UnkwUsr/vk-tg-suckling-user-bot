@@ -1,0 +1,7 @@
+LICENSE
+NOTICE
+config.py
+config.py.example
+.gitignore
+run_bot_vk_tg.sh
+docker-compose.yml
