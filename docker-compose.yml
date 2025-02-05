@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  suckling-bot:
+    build: .
+    volumes:
+      - ./config.py:/app/config.py
+    restart: always
+    # Uncomment to enable INFO level logs
+    # environment:
+    #   - PYTHONUNBUFFERED=1
