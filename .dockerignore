@@ -1,0 +1,7 @@
+# ignore all, except
+*
+!/*.py
+!/requirements.txt
+
+# but then ignore config, because it will be mounted as volume
+/config.py
