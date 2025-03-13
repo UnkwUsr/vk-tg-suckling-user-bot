@@ -7,10 +7,20 @@ This is user bot, meaning that it uses user auth tokens. I don't know does it
 work with group tokens because I don't have one. But probably it should works
 too.
 
-## Setup
+## Preparation
 
-Rename `config.py.example` to `config.py` and edit its content according to the
+Rename `config.py.example` to `config.py` and edit it according to the
 template.
+
+## Running
+
+### docker compose
+
+```
+docker-compose up
+```
+
+### Manual
 
 Install dependencies:
 
@@ -24,9 +34,9 @@ Run bot:
 python main.py
 ```
 
-Or if you running it on server, you may want use script that write logs to file
-and restarts bot if it fails (but be careful: it will still infinitely
-restarting if you have syntax errors in config file):
+Or if you running it on server, you may want to use script that write logs to
+file and automatically restarts if bot crashes (but be careful: it will still
+infinitely restarting if you have syntax errors in config file):
 
 ```
 ./run_bot_vk_tg.sh
