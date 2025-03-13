@@ -1,7 +1,7 @@
-LICENSE
-NOTICE
-config.py
-config.py.example
-.gitignore
-run_bot_vk_tg.sh
-docker-compose.yml
+# ignore all, except
+*
+!/*.py
+!/requirements.txt
+
+# but then ignore config, because it will be mounted as volume
+/config.py
