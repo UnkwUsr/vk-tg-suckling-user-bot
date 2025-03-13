@@ -83,12 +83,12 @@ class Vk:
                 text += "\nVideo: " + url
             if "wall" in attach.keys():
                 wall = attach["wall"]
-                url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
+                url = "<code>vk.com/wall{0}_{1}</code>".format(wall["owner_id"], wall["id"])
                 text += "\nWall: {0}\n".format(url)
                 text += self.recursive_process_message(wall)
             if "wall_reply" in attach.keys():
                 wall_reply = attach["wall_reply"]
-                url = "vk.com/wall{0}_{1}?reply={2}".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
+                url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
                 text += "\nWall reply: {0}\n".format(url)
                 text += self.recursive_process_message(wall_reply)
 

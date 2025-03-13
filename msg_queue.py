@@ -22,7 +22,7 @@ class Queue:
         while True:
             try:
                 for x in smart_split(text):
-                    self.tg.send_message(chat_id=self.out_tg_chat_id, text=x)
+                    self.tg.send_message(chat_id=self.out_tg_chat_id, text=x, parse_mode="html")
                 break
             except Exception as e:
                 print("tg send_message exception:")
