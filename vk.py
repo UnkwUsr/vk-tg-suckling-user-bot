@@ -84,7 +84,8 @@ class Vk:
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "vk.com/wall{0}_{1}".format(wall["owner_id"], wall["id"])
-                text += "\nWall: {0}\n{1}".format(url, wall["text"])
+                text += "\nWall: {0}\n".format(url)
+                text += self.recursive_process_message(wall)
             if "wall_reply" in attach.keys():
                 wall_reply = attach["wall_reply"]
                 url = "vk.com/wall{0}_{1}?reply={2}".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
