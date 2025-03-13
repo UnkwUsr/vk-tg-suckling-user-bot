@@ -5,6 +5,6 @@ services:
     volumes:
       - ./config.py:/app/config.py
     restart: always
-    # Uncomment to enable INFO level logs
-    # environment:
-    #   - PYTHONUNBUFFERED=1
+    environment:
+      # this is fix to enable logs
+      - PYTHONUNBUFFERED=1
