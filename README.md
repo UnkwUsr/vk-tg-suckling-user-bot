@@ -1,18 +1,16 @@
 # vk-tg-suckling-user-bot
 
-This is one-way bridge for messages from vkontakte to telegram (hence
+This is one-way bridge for chat messages from vkontakte to telegram (hence
 "suckling", it sucks (messages) from vk).
 
-This is user bot, meaning that it uses user auth tokens. I don't know does it
-work with group tokens because I don't have one. But probably it should works
+This is user bot, meaning that it uses user auth token. I don't know if it
+works with group tokens because I don't have one, but probably it should works
 too.
 
-## Preparation
-
-Rename `config.py.example` to `config.py` and edit it according to the
-template.
-
 ## Running
+
+Preparation step: rename `config.py.example` to `config.py` and edit it
+according to the template.
 
 ### docker compose
 
