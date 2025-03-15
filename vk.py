@@ -86,7 +86,12 @@ class Vk:
                 url = "<code>vk.com/wall{0}_{1}</code>".format(wall["owner_id"], wall["id"])
                 text += "\nWall: {0}\n".format(url)
                 text += self.recursive_process_message(wall)
+                if "copy_history" in wall.keys():
+                    for repost in wall["copy_history"]:
+                        text += "\nWall repost:\n"
+                        text += self.recursive_process_message(repost)
             if "wall_reply" in attach.keys():
+                # wall reply is a comment on wall post
                 wall_reply = attach["wall_reply"]
                 url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
                 text += "\nWall reply: {0}\n".format(url)
