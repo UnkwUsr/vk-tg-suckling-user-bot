@@ -96,6 +96,9 @@ class Vk:
                 url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
                 text += "\nWall reply: {0}\n".format(url)
                 text += self.recursive_process_message(wall_reply)
+            if "graffiti" in attach.keys():
+                graffiti = attach["graffiti"]
+                text += "\nGraffiti: " + graffiti["url"]
 
         if "reply_message" in message.keys():
             reply = message["reply_message"]
