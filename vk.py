@@ -67,14 +67,16 @@ class Vk:
                 photos = sorted(
                     attach["photo"]["sizes"], key=lambda x: x["width"] * x["height"]
                 )
-                text += "\nPhoto: " + photos[-1]["url"]
+                text += format_hyperlink("image", photos[-1]["url"])
             if "sticker" in attach.keys():
-                text += "\nSticker: " + attach["sticker"]["images"][-1]["url"]
+                sticker_url = attach["sticker"]["images"][-1]["url"]
+                text += format_hyperlink("sticker", sticker_url)
             if "audio_message" in attach.keys():
                 # TODO: ogg or mp3?
-                text += "\nVoice: " + attach["audio_message"]["link_ogg"]
+                voice_url = attach["audio_message"]["link_ogg"]
+                text += format_hyperlink("voice message", voice_url)
             if "doc" in attach.keys():
-                text += "\nDocument: " + attach["doc"]["url"]
+                text += format_hyperlink("document", attach["doc"]["url"])
             if "link" in attach.keys():
                 text += "\nLink: " + attach["link"]["url"]
             if "video" in attach.keys():
@@ -83,7 +85,9 @@ class Vk:
                 text += "\nVideo: " + url
             if "wall" in attach.keys():
                 wall = attach["wall"]
-                url = "<code>vk.com/wall{0}_{1}</code>".format(wall["owner_id"], wall["id"])
+                url = "<code>vk.com/wall{0}_{1}</code>".format(
+                    wall["owner_id"], wall["id"]
+                )
                 text += "\nWall: {0}\n".format(url)
                 text += self.recursive_process_message(wall)
                 if "copy_history" in wall.keys():
@@ -93,12 +97,14 @@ class Vk:
             if "wall_reply" in attach.keys():
                 # wall reply is a comment on wall post
                 wall_reply = attach["wall_reply"]
-                url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"])
+                url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(
+                    wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"]
+                )
                 text += "\nWall reply: {0}\n".format(url)
                 text += self.recursive_process_message(wall_reply)
             if "graffiti" in attach.keys():
                 graffiti = attach["graffiti"]
-                text += "\nGraffiti: " + graffiti["url"]
+                text += format_hyperlink("graffiti", graffiti["url"])
 
         if "reply_message" in message.keys():
             reply = message["reply_message"]
@@ -132,3 +138,7 @@ class Vk:
                 self.names[id] = name
 
         return res
+
+
+def format_hyperlink(text, url):
+    return "<a href='{0}'>*{1}*</a>".format(url, text)
