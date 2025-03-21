@@ -1,6 +1,7 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType, VkLongpollMode
 
+import re
 from pprint import pprint
 
 
@@ -78,7 +79,13 @@ class Vk:
             if "doc" in attach.keys():
                 text += format_hyperlink("document", attach["doc"]["url"])
             if "link" in attach.keys():
-                text += "\nLink: " + attach["link"]["url"]
+                link = attach["link"]
+                # vk represents stories as links. Weird...
+                story = self.try_parse_story(link)
+                if story:
+                    print("yea story", story)
+                else:
+                    text += "\nLink: " + link["url"]
             if "video" in attach.keys():
                 video = attach["video"]
                 url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
@@ -138,6 +145,21 @@ class Vk:
                 self.names[id] = name
 
         return res
+
+    def try_parse_story(self, link_obj):
+        if link_obj["title"] not in ["View story", "Посмотреть историю"]:
+            return None
+
+        regex_match = re.search(r"/story-(\d+_\d+)", link_obj["url"])
+        if not regex_match:
+            return None
+        story_id = regex_match.group(1)
+        print(story_id)
+        # TODO: vk responses with is_deleted=True always, cuz our access token
+        # have not enough permissions (have to go through bloody things to
+        # retrieve token for this special task)
+        ans = self.vk.stories.getById(stories=story_id)
+        pprint(ans)
 
 
 def format_hyperlink(text, url):
