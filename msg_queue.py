@@ -16,12 +16,12 @@ class Queue:
         if event.peer_id != self.in_vk_peer_id:
             return
 
-        text = event._process_message(event)
+        msg = event._process_message(event)
 
         # sometimes telegram fails, so try until successful
         while True:
             try:
-                for x in smart_split(text):
+                for x in smart_split(msg.text):
                     self.tg.send_message(chat_id=self.out_tg_chat_id, text=x, parse_mode="html")
                 break
             except Exception as e:

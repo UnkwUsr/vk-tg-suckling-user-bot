@@ -1,13 +1,13 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType, VkLongpollMode
-
 from pprint import pprint
+
+from parsed_message import ParsedMessage
 
 
 class Vk:
     session = None
     vk = None
-    # user_id => name
     names = {}
 
     def __init__(self, token):
@@ -36,13 +36,13 @@ class Vk:
                 continue
 
     def process_message(self, event):
-        text = ""
+        res = ParsedMessage()
         if event.attachments:
             full_message = self.load_full_message(event.message_id)
             print("--------")
             pprint(full_message)
             print("--------")
-            text = self.recursive_process_message(full_message)
+            res += self.recursive_process_message(full_message)
         else:
             author_id = None
             if hasattr(event, "user_id"):
@@ -50,15 +50,16 @@ class Vk:
             if hasattr(event, "group_id"):
                 author_id = event.group_id
 
-            text = self.get_id_name(author_id) + ": " + event.message
+            res.text += self.get_id_name(author_id) + ": " + event.message
 
-        return text
+        return res
 
     def load_full_message(self, message_id):
         return self.vk.messages.getById(message_ids=message_id)["items"][0]
 
     def recursive_process_message(self, message):
-        text = self.get_id_name(abs(message["from_id"])) + ": " + message["text"]
+        res = ParsedMessage()
+        res.text = self.get_id_name(abs(message["from_id"])) + ": " + message["text"]
 
         for attach in message["attachments"]:
             if "photo" in attach.keys():
@@ -67,56 +68,56 @@ class Vk:
                 photos = sorted(
                     attach["photo"]["sizes"], key=lambda x: x["width"] * x["height"]
                 )
-                text += format_hyperlink("image", photos[-1]["url"])
+                res.text += format_hyperlink("image", photos[-1]["url"])
             if "sticker" in attach.keys():
                 sticker_url = attach["sticker"]["images"][-1]["url"]
-                text += format_hyperlink("sticker", sticker_url)
+                res.text += format_hyperlink("sticker", sticker_url)
             if "audio_message" in attach.keys():
                 # TODO: ogg or mp3?
                 voice_url = attach["audio_message"]["link_ogg"]
-                text += format_hyperlink("voice message", voice_url)
+                res.text += format_hyperlink("voice message", voice_url)
             if "doc" in attach.keys():
-                text += format_hyperlink("document", attach["doc"]["url"])
+                res.text += format_hyperlink("document", attach["doc"]["url"])
             if "link" in attach.keys():
-                text += "\nLink: " + attach["link"]["url"]
+                res.text += "\nLink: " + attach["link"]["url"]
             if "video" in attach.keys():
                 video = attach["video"]
                 url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
-                text += "\nVideo: " + url
+                res.text += "\nVideo: " + url
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "<code>vk.com/wall{0}_{1}</code>".format(
                     wall["owner_id"], wall["id"]
                 )
-                text += "\nWall: {0}\n".format(url)
-                text += self.recursive_process_message(wall)
+                res.text += "\nWall: {0}\n".format(url)
+                res += self.recursive_process_message(wall)
                 if "copy_history" in wall.keys():
                     for repost in wall["copy_history"]:
-                        text += "\nWall repost:\n"
-                        text += self.recursive_process_message(repost)
+                        res.text += "\nWall repost:\n"
+                        res += self.recursive_process_message(repost)
             if "wall_reply" in attach.keys():
                 # wall reply is a comment on wall post
                 wall_reply = attach["wall_reply"]
                 url = "<code>vk.com/wall{0}_{1}?reply={2}</code>".format(
                     wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"]
                 )
-                text += "\nWall reply: {0}\n".format(url)
-                text += self.recursive_process_message(wall_reply)
+                res.text += "\nWall reply: {0}\n".format(url)
+                res += self.recursive_process_message(wall_reply)
             if "graffiti" in attach.keys():
                 graffiti = attach["graffiti"]
-                text += format_hyperlink("graffiti", graffiti["url"])
+                res.text += format_hyperlink("graffiti", graffiti["url"])
 
         if "reply_message" in message.keys():
             reply = message["reply_message"]
-            text += "\n---\nReplied to: "
-            text += self.recursive_process_message(reply)
+            res.text += "\n---\nReplied to: "
+            res += self.recursive_process_message(reply)
         if "fwd_messages" in message.keys():
             fwds = message["fwd_messages"]
             for fwd in fwds:
-                text += "\n---\nForwarded: "
-                text += self.recursive_process_message(fwd)
+                res.text += "\n---\nForwarded: "
+                res += self.recursive_process_message(fwd)
 
-        return text
+        return res
 
     def get_id_name(self, id):
         if id in self.names:
