@@ -1,5 +1,8 @@
 import time
 from telebot.util import smart_split
+from telebot.types import InputFile
+
+from downloading_files import cleanup_temp_dir_video
 
 
 class Queue:
@@ -22,7 +25,17 @@ class Queue:
         while True:
             try:
                 for x in smart_split(msg.text):
-                    self.tg.send_message(chat_id=self.out_tg_chat_id, text=x, parse_mode="html")
+                    self.tg.send_message(
+                        chat_id=self.out_tg_chat_id, text=x, parse_mode="html"
+                    )
+                if msg.video_downloaded_file:
+                    video = msg.video_downloaded_file
+                    print("Video file:", video)
+                    self.tg.send_video(
+                        chat_id=self.out_tg_chat_id,
+                        video=InputFile(video),
+                    )
+                    cleanup_temp_dir_video(video)
                 break
             except Exception as e:
                 print("tg send_message exception:")

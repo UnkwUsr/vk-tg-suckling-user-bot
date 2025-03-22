@@ -2,7 +2,10 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType, VkLongpollMode
 from pprint import pprint
 
+from downloading_files import download_video
 from parsed_message import ParsedMessage
+
+MAX_VIDEO_DURATION_TO_REUPLOAD = 6 * 30
 
 
 class Vk:
@@ -37,6 +40,7 @@ class Vk:
 
     def process_message(self, event):
         res = ParsedMessage()
+
         if event.attachments:
             full_message = self.load_full_message(event.message_id)
             print("--------")
@@ -82,8 +86,12 @@ class Vk:
                 res.text += "\nLink: " + attach["link"]["url"]
             if "video" in attach.keys():
                 video = attach["video"]
-                url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
-                res.text += "\nVideo: " + url
+                if video["duration"] > MAX_VIDEO_DURATION_TO_REUPLOAD:
+                    url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
+                    res.text += "\nVideo: " + url
+                else:
+                    res.video_downloaded_file = download_video(video["player"])
+                    res.text += "*video (see uploaded file)*"
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "<code>vk.com/wall{0}_{1}</code>".format(
