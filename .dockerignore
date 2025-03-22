@@ -1,7 +1,6 @@
 # ignore all, except
 *
-!/*.py
+!/src/*.py
 !/requirements.txt
 
-# but then ignore config, because it will be mounted as volume
-/config.py
+# P.S. config.py will be mounted as volume

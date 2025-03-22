@@ -3,7 +3,14 @@ import telebot
 from vk import Vk
 from pprint import pprint
 from msg_queue import Queue
-import config
+
+# hack to import config from parent directory
+# fmt: off
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import config  # noqa
+# fmt: on
 
 
 def vk_on_message(event):
