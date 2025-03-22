@@ -3,6 +3,8 @@ from vk_api.longpoll import VkLongPoll, VkEventType, VkLongpollMode
 
 from pprint import pprint
 
+from downloading_files import download_video
+
 
 class Vk:
     session = None
@@ -37,12 +39,13 @@ class Vk:
 
     def process_message(self, event):
         text = ""
+        video_downloaded_file = None
         if event.attachments:
             full_message = self.load_full_message(event.message_id)
             print("--------")
             pprint(full_message)
             print("--------")
-            text = self.recursive_process_message(full_message)
+            text, video_downloaded_file = self.recursive_process_message(full_message)
         else:
             author_id = None
             if hasattr(event, "user_id"):
@@ -52,13 +55,14 @@ class Vk:
 
             text = self.get_id_name(author_id) + ": " + event.message
 
-        return text
+        return text, video_downloaded_file
 
     def load_full_message(self, message_id):
         return self.vk.messages.getById(message_ids=message_id)["items"][0]
 
     def recursive_process_message(self, message):
         text = self.get_id_name(abs(message["from_id"])) + ": " + message["text"]
+        video_downloaded_file = None
 
         for attach in message["attachments"]:
             if "photo" in attach.keys():
@@ -81,19 +85,27 @@ class Vk:
                 text += "\nLink: " + attach["link"]["url"]
             if "video" in attach.keys():
                 video = attach["video"]
-                url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
-                text += "\nVideo: " + url
+                if video["duration"] > 60 * 3:
+                    url = "vk.com/video{0}_{1}".format(video["owner_id"], video["id"])
+                    text += "\nVideo: " + url
+                else:
+                    video_downloaded_file = download_video(video["player"])
+                    text += "*video (see reuploaded file)*"
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "<code>vk.com/wall{0}_{1}</code>".format(
                     wall["owner_id"], wall["id"]
                 )
                 text += "\nWall: {0}\n".format(url)
-                text += self.recursive_process_message(wall)
+                new_text, video_downloaded_file = self.recursive_process_message(wall)
+                text += new_text
                 if "copy_history" in wall.keys():
                     for repost in wall["copy_history"]:
                         text += "\nWall repost:\n"
-                        text += self.recursive_process_message(repost)
+                        new_text, video_downloaded_file = (
+                            self.recursive_process_message(repost)
+                        )
+                        text += new_text
             if "wall_reply" in attach.keys():
                 # wall reply is a comment on wall post
                 wall_reply = attach["wall_reply"]
@@ -101,7 +113,10 @@ class Vk:
                     wall_reply["owner_id"], wall_reply["post_id"], wall_reply["id"]
                 )
                 text += "\nWall reply: {0}\n".format(url)
-                text += self.recursive_process_message(wall_reply)
+                new_text, video_downloaded_file = self.recursive_process_message(
+                    wall_reply
+                )
+                text += new_text
             if "graffiti" in attach.keys():
                 graffiti = attach["graffiti"]
                 text += format_hyperlink("graffiti", graffiti["url"])
@@ -109,14 +124,16 @@ class Vk:
         if "reply_message" in message.keys():
             reply = message["reply_message"]
             text += "\n---\nReplied to: "
-            text += self.recursive_process_message(reply)
+            new_text, video_downloaded_file = self.recursive_process_message(reply)
+            text += new_text
         if "fwd_messages" in message.keys():
             fwds = message["fwd_messages"]
             for fwd in fwds:
                 text += "\n---\nForwarded: "
-                text += self.recursive_process_message(fwd)
+                new_text, video_downloaded_file = self.recursive_process_message(fwd)
+                text += new_text
 
-        return text
+        return text, video_downloaded_file
 
     def get_id_name(self, id):
         if id in self.names:
