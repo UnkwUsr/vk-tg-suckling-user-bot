@@ -1,7 +1,8 @@
 FROM python:3.10.12-alpine3.18
-RUN adduser -D -h /app -s /bin/sh app_user
-USER app_user
-WORKDIR /app
+RUN adduser -D -h /appuser -s /bin/sh appuser
+USER appuser
+RUN mkdir /appuser/app
+WORKDIR /appuser/app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
