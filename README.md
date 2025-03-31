@@ -38,7 +38,7 @@ according to the template.
 ### docker compose
 
 ```
-docker-compose up
+docker-compose up --build
 ```
 
 ### Manual
