@@ -91,7 +91,7 @@ class Vk:
                     res.text += "\nVideo: " + url
                 else:
                     res.video_downloaded_file = download_video(video["player"])
-                    res.text += "*video (see uploaded file)*"
+                    res.text += "\n*video (see uploaded file)*"
             if "wall" in attach.keys():
                 wall = attach["wall"]
                 url = "<code>vk.com/wall{0}_{1}</code>".format(
@@ -150,4 +150,4 @@ class Vk:
 
 
 def format_hyperlink(text, url):
-    return "<a href='{0}'>*{1}*</a>".format(url, text)
+    return "\n<a href='{0}'>*{1}*</a>".format(url, text)
