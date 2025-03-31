@@ -3,6 +3,9 @@
 This is one-way bridge for chat messages from vkontakte to telegram (hence
 "suckling", it sucks (messages) from vk, and only this way).
 
+You can make multiple different chat bridges, selecting from which vk chat to
+take messages and to which telegram chat bridge them.
+
 This is user bot, meaning that it uses user auth token. I don't know if it
 works with group tokens because I don't have one, but probably it should works
 too.
