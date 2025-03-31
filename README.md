@@ -19,12 +19,13 @@ too.
 * [x] links
 * [x] wall posts
 * [x] comments to wall posts
-* [ ] video (currently forwards only video link, but planned to reupload video
-  file to telegram)
+* [x] video (reuploads video files to telegram (by default limited to 3 minutes
+  video duration))
 
 not planned:
 
-* music
+* music (user token have not enough permissions)
+* stories (user token have not enough permissions)
 
 ## Running
 
