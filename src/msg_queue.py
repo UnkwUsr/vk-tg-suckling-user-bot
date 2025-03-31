@@ -24,8 +24,9 @@ class Queue:
         # sometimes telegram fails, so try until successful
         while True:
             try:
+                sent_txt_tg_msg = None
                 for x in smart_split(msg.text):
-                    self.tg.send_message(
+                    sent_txt_tg_msg = self.tg.send_message(
                         chat_id=self.out_tg_chat_id, text=x, parse_mode="html"
                     )
                 if msg.video_downloaded_file:
@@ -33,6 +34,7 @@ class Queue:
                     print("Video file:", video)
                     self.tg.send_video(
                         chat_id=self.out_tg_chat_id,
+                        reply_to_message_id=sent_txt_tg_msg.message_id,
                         video=InputFile(video),
                     )
                     cleanup_temp_dir_video(video)
