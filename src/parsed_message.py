@@ -2,6 +2,7 @@
 # telegram bridge
 class ParsedMessage:
     text = ""
+    previews = []
     video_downloaded_file = None
 
     # operator +=
@@ -14,3 +15,6 @@ class ParsedMessage:
         if other.video_downloaded_file:
             self.video_downloaded_file = other.video_downloaded_file
         return self
+
+    def add_preview(self, p):
+        self.previews.append(p)

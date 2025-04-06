@@ -21,14 +21,28 @@ class Queue:
 
         msg = event._process_message(event)
 
+        # hack: always append first preview to text message
+        if len(msg.previews) > 0:
+            msg.text += msg.previews.pop(0)
+
         # sometimes telegram fails, so try until successful
         while True:
             try:
                 sent_txt_tg_msg = None
+                # send message with text (can be splitted if too long)
                 for x in smart_split(msg.text):
                     sent_txt_tg_msg = self.tg.send_message(
                         chat_id=self.out_tg_chat_id, text=x, parse_mode="html"
                     )
+                # send messages with preview images
+                for p in msg.previews:
+                    self.tg.send_message(
+                        chat_id=self.out_tg_chat_id,
+                        reply_to_message_id=sent_txt_tg_msg.message_id,
+                        text=p,
+                        parse_mode="html",
+                    )
+                # send video file
                 if msg.video_downloaded_file:
                     video = msg.video_downloaded_file
                     print("Video file:", video)

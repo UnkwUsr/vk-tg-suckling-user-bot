@@ -72,16 +72,16 @@ class Vk:
                 photos = sorted(
                     attach["photo"]["sizes"], key=lambda x: x["width"] * x["height"]
                 )
-                res.text += format_hyperlink("image", photos[-1]["url"])
+                res.add_preview(format_hyperlink("image", photos[-1]["url"]))
             if "sticker" in attach.keys():
                 sticker_url = attach["sticker"]["images"][-1]["url"]
                 res.text += format_hyperlink("sticker", sticker_url)
             if "audio_message" in attach.keys():
                 # TODO: ogg or mp3?
                 voice_url = attach["audio_message"]["link_ogg"]
-                res.text += format_hyperlink("voice message", voice_url)
+                res.add_preview(format_hyperlink("voice message", voice_url))
             if "doc" in attach.keys():
-                res.text += format_hyperlink("document", attach["doc"]["url"])
+                res.add_preview(format_hyperlink("document", attach["doc"]["url"]))
             if "link" in attach.keys():
                 res.text += "\nLink: " + attach["link"]["url"]
             if "video" in attach.keys():
@@ -113,7 +113,7 @@ class Vk:
                 res += self.recursive_process_message(wall_reply)
             if "graffiti" in attach.keys():
                 graffiti = attach["graffiti"]
-                res.text += format_hyperlink("graffiti", graffiti["url"])
+                res.add_preview(format_hyperlink("graffiti", graffiti["url"]))
 
         if "reply_message" in message.keys():
             reply = message["reply_message"]
