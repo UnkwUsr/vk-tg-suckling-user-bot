@@ -84,6 +84,13 @@ class Vk:
                 res.add_preview(format_hyperlink("document", attach["doc"]["url"]))
             if "link" in attach.keys():
                 res.text += "\nLink: " + attach["link"]["url"]
+            if "audio" in attach.keys():
+                # audios not really supported, here just showing artist and
+                # title of the track
+                audio = attach["audio"]
+                res.text += "\nAudio (reuploading not supported): {0} - {1}".format(
+                    audio["artist"], audio["title"]
+                )
             if "video" in attach.keys():
                 video = attach["video"]
                 if video["duration"] > MAX_VIDEO_DURATION_TO_REUPLOAD:
