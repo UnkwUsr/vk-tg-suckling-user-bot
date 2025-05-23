@@ -5,6 +5,7 @@ import os
 
 
 def download_video(url):
+    print("Downloading video...")
     temp_dir = mkdtemp(prefix="vk-tg-bot-yt-dlp-")
     ydl_opts = {
         "quiet": True,
